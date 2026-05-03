@@ -174,7 +174,25 @@
 
       let best = available[0];
       for (let j of available) {
-        if (j.priority < best.priority) best = j;
+        // 1. Primary rule: Lowest priority number executes first
+        if (j.priority < best.priority) {
+          best = j;
+        } 
+        // 2. Primary Tie-Breaker: If priorities match, earlier arrival wins
+        else if (j.priority === best.priority) {
+          if (j.arrival < best.arrival) {
+            best = j;
+          }
+          // 3. Secondary Tie-Breaker: If both priority AND arrival match, lowest Job ID wins
+          else if (j.arrival === best.arrival) {
+            // Extract the numbers from "J1", "J2" to compare them properly
+            let jIdNum = parseInt(j.id.substring(1));
+            let bestIdNum = parseInt(best.id.substring(1));
+            if (jIdNum < bestIdNum) {
+              best = j;
+            }
+          }
+        }
       }
 
       ganttBlocks.push({ id: best.id, start: clock, end: clock + best.burst });
